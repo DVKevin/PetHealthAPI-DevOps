@@ -1,0 +1,76 @@
+# ============================================================
+# PetHealthAPI - docker-compose.yml
+# Challenge FIAP 2026 - DevOps Tools & Cloud Computing
+# ============================================================
+
+services:
+
+  # ------------------------------------------------------
+  # CONTAINER 1: Banco Oracle XE 21c
+  # ------------------------------------------------------
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: pethealth-oracle
+    restart: unless-stopped
+
+    environment:
+      ORACLE_PASSWORD: PetHealth2026
+      APP_USER: pethealth
+      APP_USER_PASSWORD: PetHealth2026
+
+    ports:
+      - "1521:1521"
+
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+
+    networks:
+      - pethealth-net
+
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 30
+      start_period: 180s
+
+  # ------------------------------------------------------
+  # CONTAINER 2: API .NET 8
+  # ------------------------------------------------------
+  pethealth-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pethealth-api:1.0.0
+    container_name: pethealth-api
+    restart: unless-stopped
+
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: "http://+:8080"
+      ConnectionStrings__OracleConnection: "User Id=pethealth;Password=PetHealth2026;Data Source=oracle-db:1521/XEPDB1;"
+
+    ports:
+      - "8081:8080"
+
+    networks:
+      - pethealth-net
+
+# ============================================================
+# VOLUMES NOMEADOS
+# ============================================================
+volumes:
+  oracle-data:
+    name: pethealth-oracle-data
+
+# ============================================================
+# NETWORKS
+# ============================================================
+networks:
+  pethealth-net:
+    name: pethealth-net
+    driver: bridge

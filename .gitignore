@@ -1,0 +1,25 @@
+# ─── .NET ─────────────────────────────────────────────────
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+.vs/
+*.pidb
+*.dll
+*.pdb
+
+# ─── IDEs ─────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ─── Sistema ──────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ─── Docker / dados locais ────────────────────────────────
+.docker/
+*.log
+oracle-data/
