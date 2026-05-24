@@ -2,7 +2,7 @@
 
 **Challenge FIAP 2026 — DevOps Tools & Cloud Computing**
 
-API RESTful em **.NET 8** para gestão completa de saúde de pets (tutores, pets, vacinas, consultas e medicamentos), containerizada com **Docker Compose** e implantada em uma **VM Linux Ubuntu na Azure**, com banco **Oracle XE 18c** containerizado e persistência via volume nomeado.
+API RESTful em **.NET 8** para gestão completa de saúde de pets (tutores, pets, vacinas, consultas e medicamentos), containerizada com **Docker Compose** e implantada em uma **VM Linux Ubuntu na Azure**, com banco **Oracle XE 21c** containerizado e persistência via volume nomeado.
 
 ---
 
@@ -28,7 +28,7 @@ O **PetHealthAPI** é uma plataforma de gestão veterinária que centraliza o hi
 A solução é entregue como dois containers orquestrados via Docker Compose:
 
 - **`pethealth-api`** — aplicação .NET 8 rodando como usuário não-root, expondo Swagger em `:8080`.
-- **`pethealth-oracle`** — banco Oracle XE 18c com volume nomeado para persistência real dos dados.
+- **`pethealth-oracle`** — banco Oracle XE 21c com volume nomeado para persistência real dos dados.
 
 Tudo provisionado em uma VM Linux na Azure por meio de um único script Azure CLI.
 
@@ -70,7 +70,7 @@ Tudo provisionado em uma VM Linux na Azure por meio de um único script Azure CL
                               │   │   │           ▼ 1521       │    │  │
                               │   │   │  ┌──────────────────┐  │    │  │
                               │   │   │  │ pethealth-oracle │  │    │  │
-                              │   │   │  │ Oracle XE 18c    │  │    │  │
+                              │   │   │  │ Oracle XE 21c    │  │    │  │
                               │   │   │  └────────┬─────────┘  │    │  │
                               │   │   │           │            │    │  │
                               │   │   └───────────┼────────────┘    │  │
@@ -100,7 +100,7 @@ Tudo provisionado em uma VM Linux na Azure por meio de um único script Azure CL
 | Linguagem | C# / .NET | 8.0 |
 | ORM | Entity Framework Core + Oracle Provider | 8.21 |
 | API | ASP.NET Core Web API + Swagger | 8.0 / 6.5 |
-| Banco | Oracle Database Express Edition | 18c (gvenzl/oracle-xe:18-slim-faststart) |
+| Banco | Oracle Database Express Edition | 21c (gvenzl/oracle-xe:21-slim) |
 | Containerização | Docker + Docker Compose | latest |
 | Sistema Operacional | Ubuntu Server | 22.04 LTS |
 | Cloud | Microsoft Azure (Standard_B2ats_v2) | — |
@@ -114,22 +114,19 @@ Tudo provisionado em uma VM Linux na Azure por meio de um único script Azure CL
 PetHealthAPI-DevOps/
 ├── PetHealthAPI/                     ← Código-fonte da API .NET
 │   ├── Controllers/                  ← CRUDs (Tutores, Pets, Vacinas, Consultas, Medicamentos)
-│   ├── Models/                       ← Entidades do domínio
+│   ├── Models/                       ← Entidades do domínio (Tutor, Pet, Vacina, Consulta, Medicamento)
 │   ├── Data/AppDbContext.cs          ← DbContext do EF Core
 │   ├── Program.cs                    ← Bootstrap + retry de conexão com Oracle
 │   ├── appsettings.json
 │   ├── appsettings.Production.json   ← Connection string para Oracle containerizado
 │   └── PetHealthAPI.csproj
 │
-├── db-init/
-│   └── 01-seed.sql                   ← 2 inserts significativos iniciais (tutores + pets)
-│
 ├── scripts/
 │   ├── deploy-azure.sh               ← Script Azure CLI completo (provisiona tudo)
 │   └── destroy-azure.sh              ← Script para apagar a VM ao final
 │
-├── Dockerfile                        ← Multi-stage .NET 8 + usuário não-root (petuser)
-├── docker-compose.yml                ← API + Oracle 18c + volume nomeado + network
+├── Dockerfile                        ← Multi-stage .NET 8 Alpine + usuário não-root (petuser)
+├── docker-compose.yml                ← API + Oracle 21c + volume nomeado + network
 ├── .gitignore
 └── README.md                         ← este arquivo
 ```
@@ -197,7 +194,7 @@ cd PetHealthAPI-DevOps
 O script faz em sequência:
 1. Login na Azure
 2. Cria o Resource Group `rg-pethealth-fiap` (Chile Central)
-3. Provisiona a VM Linux Ubuntu 22.04
+3. Provisiona a VM Linux Ubuntu 22.04 LTS
 4. Abre as portas 22, 80, 1521 e 8080
 5. Instala Docker, Docker Compose, Git, Nano e Curl
 
@@ -231,10 +228,10 @@ az group delete --name rg-pethealth-fiap --yes --no-wait
 ## 🔒 Validação da Persistência
 
 ```bash
-# 1) Cria um registro
+# 1) Cria um registro via Postman ou curl
 curl -X POST http://IP_VM:8080/api/tutores \
   -H "Content-Type: application/json" \
-  -d '{"nome":"Teste Persistência","email":"teste@pers.com","telefone":"11900000000","endereco":"Rua Teste, 1"}'
+  -d '{"nome":"Teste Persistencia","email":"teste@pers.com","telefone":"11900000000","endereco":"Rua Teste, 1"}'
 
 # 2) Derruba os containers
 cd ~/PetHealthAPI-DevOps && docker compose down
