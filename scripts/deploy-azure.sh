@@ -29,7 +29,7 @@ LOCATION="chilecentral"
 VM_NAME="vm-pethealth-fiap"
 VM_USER="azureuser"
 VM_IMAGE="Ubuntu2204"
-VM_SIZE="Standard_B2ats_v2"
+VM_SIZE="Standard_B2als_v2"
 ADMIN_PASSWORD="PetHealth@2026!"
 GITHUB_REPO="https://github.com/DVKevin/PetHealthAPI.git"
 
