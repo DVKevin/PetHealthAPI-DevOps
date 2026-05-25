@@ -280,7 +280,7 @@ docker stats --no-stream
 | 556649 | Matheus Arazin de Oliveira |
 | 565597 | Arthur Pioli Silva |
 
-📺 **Vídeo da entrega:** [link do YouTube]
+📺 **Vídeo da entrega:** https://youtu.be/uo_B6bno_Xs
 📂 **Repositório:** [https://github.com/DVKevin/PetHealthAPI-DevOps](https://github.com/DVKevin/PetHealthAPI-DevOps)
 
 ---
