@@ -31,7 +31,7 @@ VM_USER="azureuser"
 VM_IMAGE="Ubuntu2204"
 VM_SIZE="Standard_B2als_v2"
 ADMIN_PASSWORD="PetHealth@2026!"
-GITHUB_REPO="https://github.com/DVKevin/PetHealthAPI.git"
+GITHUB_REPO="https://github.com/DVKevin/PetHealthAPI-DevOps.git"
 
 # ────────────────────────────────────────────────────────────
 # 2) Funções auxiliares
@@ -94,9 +94,9 @@ warn "Aguardando NSG ficar disponível (45s)..."
 sleep 45
 
 az vm open-port --resource-group "$RESOURCE_GROUP" --name "$VM_NAME" --port 80   --priority 1001 --output none
-az vm open-port --resource-group "$RESOURCE_GROUP" --name "$VM_NAME" --port 8080 --priority 1002 --output none
+az vm open-port --resource-group "$RESOURCE_GROUP" --name "$VM_NAME" --port 8081 --priority 1002 --output none
 az vm open-port --resource-group "$RESOURCE_GROUP" --name "$VM_NAME" --port 1521 --priority 1003 --output none
-ok "Portas 22, 80, 1521 e 8080 liberadas."
+ok "Portas 22, 80, 1521 e 8081 liberadas."
 
 # ────────────────────────────────────────────────────────────
 # 7) INSTALAÇÃO DE FERRAMENTAS NA VM
